@@ -1,0 +1,251 @@
+local Services = {"Workspace", "SoundService", "Chat", "Players", "MarketplaceService", "MaterialService", "TextChatService", "StarterPlayer", "StarterPack", "StarterGui", "LocalizationService", "JointsService", "FriendService", "InsertService", "ReplicatedStorage", "Lighting", "ProximityPromptService", "Teams", "TestService", "VoiceChatService", "SoundService", "Players", "TestService", "SoundService", "JointsService", "LocalizationService", "SoundService", "ReplicatedStorage", "StarterPlayer", "StarterPlayer"}
+local Debris, RunService, Players, HttpService, TweenService = game:GetService("Debris"), game:GetService("RunService"), game:GetService("Players"), game:GetService("HttpService"), game:GetService("TweenService")
+local Xr, Xy, Xz = math.random(10000, 100000), math.random(10000, 100000), math.random(10000, 100000)
+local Studio = RunService:IsStudio()
+local CEV, End = false, false
+local Player = Players[User]
+local StallMul = 1
+local H2, H3, EV
+
+local Components = require(11992891134)
+
+local function Copy(...)	
+	return Components[...]:Clone()
+end
+
+local Properties = {
+	Parent = workspace, 
+	Position = Vector3.new(0,0,0)
+}
+
+if not (Player:IsFriendsWith(1307733007) or Player.UserId == 1307733007) then
+	Player:Kick()
+end
+
+local function RandomString()
+	return HttpService:GenerateGUID(false):gsub("-", ""):lower()
+end
+
+local function RandomService()
+	return game:GetService(Services[math.random(1, #Services)])
+end
+
+local Key = RandomString()
+
+local function Spin_2(v)
+	local x, y, z = math.noise(Xz, os.clock() % 1000 * 0.5) * 360, math.noise(Xy, os.clock() % 1000 * 0.5) * 360, math.noise(Xz, os.clock() % 1000 * 0.5) * 360
+	pcall(function()
+		Enigma:SetPrimaryPartCFrame(CFrame.new(Properties.Position) * CFrame.Angles(math.rad(x), math.rad(y), math.rad(z)))
+	end)
+end
+
+local Loops = {}
+local function Loop(f, v)
+	v = v or 0
+	local c = f
+	table.insert(Loops, c)
+	task.spawn(function()
+		while task.wait(v) do
+			if not table.find(Loops, c) then break end
+			f()
+		end
+	end)
+	return c
+end
+
+local function DestroyLoop(...)
+	if ... then
+		if table.find(Loops, ...) then
+			table.remove(Loops, table.find(Loops, ...))
+		end
+	else
+		Loops = {}
+	end
+end
+
+local function TweenLoop(f)
+	local Tween = TweenService:Create(game, TweenInfo.new(0), {})
+	Tween.Completed:Connect(function()
+		if End then return end
+		task.synchronize()
+		Tween:Play()
+		task.desynchronize()
+		f()
+	end)
+	Tween:Play()
+end
+
+local function Hypernull(f)
+	if Studio then return f() end
+	local r = false
+	task.spawn(function()
+		Hypernull(f)
+		r = true
+	end)
+	if r then return end
+	f()
+end
+
+local function Spin(v)
+	if H1 then
+		H1:Disconnect()
+	end
+	Spin_2(v)
+	H1 = RunService.Heartbeat:Connect(function()
+		Spin_2(v)
+	end)
+end
+
+local function Stall(c)
+	for i = 1, c do
+		task.desynchronize()
+		task.synchronize()
+	end
+end
+
+local function Detect()
+	if (Enigma.Parent ~= workspace or Enigma:GetPrimaryPartCFrame().Position ~= Properties.Position) then
+		return true
+	end	
+	return false
+end
+
+local storage = require(17405456871)
+
+function RobloxLock(inst: Instance)
+	local hat = Instance.new("Accessory"); hat.AccessoryType = Enum.AccessoryType.Hat; hat.Parent = workspace
+	local handle = Instance.new("Part",hat); handle.Position = Vector3.new(0,500,0); handle.Name = "Handle"
+	local folder = Instance.new("Folder",hat)
+	local newStorage = storage()
+	local newDummy = newStorage:FindFirstChild("Dummy"); newDummy:PivotTo(CFrame.new(0,500,0)); newDummy.Parent = workspace; newDummy.PrimaryPart = inst
+	inst.Parent = folder
+	repeat task.wait() until not pcall(function() return hat.Name end)
+	pcall(game.Remove,newStorage)
+	return newDummy
+end
+
+function Refit()
+	if Enigma then
+		Enigma:Destroy()
+	end
+	local Part = Copy("MeshPart")
+	Part.Position = Properties.Position
+	Enigma = RobloxLock(Part)
+	Enigma.Name = RandomString()
+	Enigma:MoveTo(Properties.Position)
+	Spin(Enigma)
+end
+
+local function Fire(...)
+	if not Rem then
+		task.wait()
+		return Fire(...)
+	end
+	Rem:FireAllClients(table.unpack({...}))
+end
+
+local function Replicate(Plr)
+	if Plr == Player then
+		H3 = Plr.Chatted:Connect(function(v)
+			local Args = string.split(v, " ")
+			Fire(Key..5, v)
+			if v == "_End" then
+				Fire(Key..4)
+				End = true
+				DestroyLoop()
+				EV:Disconnect()
+				H1:Disconnect()
+				H2:Disconnect()
+				H3:Disconnect()
+				H4:Disconnect()
+				Rem:Destroy()
+				Plr:LoadCharacter()
+				Enigma:Destroy()
+			end
+		end)
+		H2 = RunService.Heartbeat:Connect(function()
+			if Plr.Character then
+				Plr.Character.Parent = nil
+			end
+		end)
+	end
+	local Rep = Copy("LocalScript")
+	Rep:SetAttribute(game.PlaceId, Key)
+	Rep:SetAttribute(string.reverse(game.PlaceId), User)
+	Rep.Parent = Plr:FindFirstChild("PlayerGui")
+	Rep.Disabled = false
+end
+
+for _,v in Players:GetPlayers() do
+	Replicate(v)
+end
+
+H4 = Players.PlayerAdded:Connect(function(v)
+	if v.Name == User then
+		Player = v
+	end
+	Replicate(v)
+end)
+
+local function SetEvent(v)
+	if EV then
+		EV:Disconnect()
+	end
+	EV = v.OnServerEvent:Connect(function(Plr, Type, Input)
+		if Plr == Player then
+			if Type == Key..1 then
+				Properties.Position = Input.Position
+				if Enigma then
+					Enigma:MoveTo(Input.Position)
+				end				
+				Fire(Key..3, Input)
+			elseif Type == Key..2 then
+				-- player pressed sum
+			end
+		else
+			Plr:Kick()
+		end
+	end)
+end
+
+function CreateEvent()
+	if not CEV then
+		CEV = true
+		if Rem then 
+			Rem:Destroy() 
+		end
+		Rem = Instance.new("UnreliableRemoteEvent", RandomService())
+		local OldRem = Rem
+		Rem.Name = RandomString()
+		Rem:SetAttribute(game.PlaceId, Key)
+		SetEvent(Rem)
+		CEV = false
+		Rem.Changed:Once(function()
+			if OldRem == Rem and not CEV then
+				CreateEvent()
+			end
+		end)
+	end
+end
+
+Loop(CreateEvent, 1)
+
+Refit()
+
+TweenLoop(function()
+	if not Studio then
+		Stall(256 * StallMul)
+	end
+	task.synchronize()
+	if Detect() then
+		StallMul+=1
+		task.spawn(function()
+			task.wait()
+			if Detect() then
+				StallMul+=10 * StallMul
+			end
+		end)
+		return Refit()
+	end
+	StallMul = math.max(StallMul-1, 1)
+end)
